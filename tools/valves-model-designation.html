@@ -1,0 +1,1087 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title data-i18n="title">GB/T 32808-2016 阀门 型号编制方法</title>
+<style>
+    /* Basic styling for the page */
+    body {
+        font-family: Arial, sans-serif;
+        margin: 20px;
+    }
+
+    .container {
+        max-width: 1200px;
+        /* Increased width to accommodate two panels */
+        margin: auto;
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        /* Two equal-width columns */
+        grid-gap: 20px;
+        /* Spacing between columns */
+    }
+
+    .panel {
+        border: 1px solid #ccc;
+        padding: 15px;
+    }
+
+    .form-group {
+        margin-bottom: 15px;
+    }
+
+    label {
+        display: block;
+        margin-bottom: 5px;
+    }
+
+    select,
+    input {
+        width: 100%;
+        padding: 8px;
+        box-sizing: border-box;
+    }
+
+    button {
+        padding: 10px 15px;
+        background-color: #007BFF;
+        color: white;
+        border: none;
+        cursor: pointer;
+    }
+
+    #result {
+        margin-top: 20px;
+        font-weight: bold;
+    }
+
+    #language-select {
+        position: absolute;
+        top: 10px;
+        right: 10px;
+    }
+
+    #parse-result {
+        margin-top: 20px;
+    }
+    
+    /* 响应式设计 */
+    @media (max-width: 768px) {
+        .container {
+            grid-template-columns: 1fr;
+        }
+    }
+    
+    #languageToggle {
+        padding: 10px 15px;
+        background-color: #f0f0f0;
+        border: none;
+        cursor: pointer;
+        font-family: Arial, sans-serif;
+        position: relative;
+    }
+
+    #languageToggle::before {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 50%;
+        height: 100%;
+        background-color: #007BFF;
+        z-index: -1;
+        transition: width 0.3s ease;
+    }
+
+    #languageToggle:hover::before {
+        width: 100%;
+    }
+
+    #languageToggle span {
+        margin: 0 5px;
+    }
+
+    #zhText {
+        background-color: #007BFF;
+        color: white;
+        padding: 5px 10px;
+        border-radius: 4px;
+    }
+
+    #enText {
+        background-color: #ccc;
+        color: black;
+        padding: 5px 10px;
+        border-radius: 4px;
+    }
+
+    .zh-active #zhText {
+        background-color: #007BFF;
+        color: white;
+    }
+
+    .zh-active #enText {
+        background-color: #ccc;
+        color: black;
+    }
+
+    .en-active #zhText {
+        background-color: #ccc;
+        color: black;
+    }
+
+    .en-active #enText {
+        background-color: #007BFF;
+        color: white;
+    }
+</style>
+</head>
+
+<body onload="updateStructureOptions();">
+<div class="container">
+    <h1 data-i18n="h1">GB/T 32808-2016 阀门 型号编制方法</h1>
+
+    <!--中英文切换按钮-->
+    <div id="language-select">
+        <button id="languageToggle" onclick="toggleLanguage()">
+            <span id="zhText">中文</span>/<span id="enText">EN</span>
+        </button>
+    </div>
+</div>
+<div class="container">
+    <!--阀门型号生成模块-->
+    <div class="panel">
+        <h2 data-i18n="generatePanelTitle">生成阀门型号</h2>
+        <div class="form-group">
+            <label for="valveType" data-i18n="valveType">阀门类型:</label>
+            <select id="valveType">
+                <option value="" data-i18n="-- 选择阀门类型 --">-- 选择阀门类型 --</option>
+                <option value="A" data-i18n="安全阀（弹簧载荷式、先导式）">安全阀（弹簧载荷式、先导式）</option>
+                <option value="GA" data-i18n="安全阀（重锤杠杆式）">安全阀（重锤杠杆式）</option>
+                <option value="D" data-i18n="蝶阀">蝶阀</option>
+                <option value="G" data-i18n="隔膜阀">隔膜阀</option>
+                <option value="H" data-i18n="止回阀、底阀">止回阀、底阀</option>
+                <option value="J" data-i18n="截止阀">截止阀</option>
+                <option value="L" data-i18n="节流阀">节流阀</option>
+                <option value="PW" data-i18n="排污阀">排污阀</option>
+                <option value="Q" data-i18n="球阀（整体球）">球阀（整体球）</option>
+                <option value="PQ" data-i18n="球阀（半球）">球阀（半球）</option>
+                <option value="S" data-i18n="蒸汽疏水阀">蒸汽疏水阀</option>
+                <option value="SD" data-i18n="堵阀（电站用）">堵阀（电站用）</option>
+                <option value="T" data-i18n="控制阀（调节阀）">控制阀（调节阀）</option>
+                <option value="U" data-i18n="柱塞阀">柱塞阀</option>
+                <option value="X" data-i18n="旋塞阀">旋塞阀</option>
+                <option value="Y" data-i18n="减压阀（自力式）">减压阀（自力式）</option>
+                <option value="WY" data-i18n="减温减压阀（非自力式）">减温减压阀（非自力式）</option>
+                <option value="Z" data-i18n="闸阀">闸阀</option>
+                <!--
+                <option value="DH" data-i18n="倒流防止器">倒流防止器</option>
+                <option value="M" data-i18n="液面指示">液面指示</option>
+                <option value="P" data-i18n="进排气阀（单一进排气口）">进排气阀（单一进排气口）</option>
+                <option value="FFP" data-i18n="进排气阀（复合型）">进排气阀（复合型）</option>
+                <option value="PZ" data-i18n="排渣阀">排渣阀</option>
+                -->
+            </select>
+        </div>
+
+        <div class="form-group">
+            <label for="driveType" data-i18n="driveType">驱动方式:</label>
+            <select id="driveType">
+                <option value="" data-i18n="-- 选择驱动方式 --">-- 选择驱动方式 --</option>
+                <option value="0" data-i18n="电磁动">电磁动</option>
+                <option value="1" data-i18n="电磁-液动">电磁-液动</option>
+                <option value="2" data-i18n="电-液联动">电-液联动</option>
+                <option value="3" data-i18n="蜗轮">蜗轮</option>
+                <option value="4" data-i18n="正齿轮">正齿轮</option>
+                <option value="5" data-i18n="伞齿轮">伞齿轮</option>
+                <option value="6" data-i18n="气动">气动</option>
+                <option value="7" data-i18n="液动">液动</option>
+                <option value="8" data-i18n="气-液动">气-液动</option>
+                <option value="9" data-i18n="电动">电动</option>
+                <option value="" data-i18n="缺省情况（手轮、手柄、扳手传动，安全阀、减压阀、疏水阀无驱动）">缺省情况（手轮、手柄、扳手传动，安全阀、减压阀、疏水阀无驱动）</option>
+            </select>
+        </div>
+
+        <div class="form-group">
+            <label for="connectionType" data-i18n="connectionType">连接形式:</label>
+            <select id="connectionType">
+                <option value="" data-i18n="-- 选择连接形式 --">-- 选择连接形式 --</option>
+                <option value="1" data-i18n="内螺纹">内螺纹</option>
+                <option value="2" data-i18n="外螺纹">外螺纹</option>
+                <option value="4" data-i18n="法兰">法兰</option>
+                <option value="6" data-i18n="焊接">焊接</option>
+                <option value="7" data-i18n="对夹">对夹</option>
+                <option value="8" data-i18n="卡箍">卡箍</option>
+                <option value="9" data-i18n="卡套">卡套</option>
+            </select>
+        </div>
+
+        <div class="form-group">
+            <label for="structureType" data-i18n="structureType">结构形式:</label>
+            <select id="structureType">
+                <option value="" data-i18n="-- 选择结构形式 --">-- 选择结构形式 --</option>
+            </select>
+        </div>
+
+        <div class="form-group">
+            <label for="sealMaterial" data-i18n="sealMaterial">密封面材料:</label>
+            <select id="sealMaterial">
+                <option value="" data-i18n="-- 选择密封面材料 --">-- 选择密封面材料 --</option>
+                <option value="B" data-i18n="锡基合金 (巴氏合金)">锡基合金 (巴氏合金)</option>
+                <option value="C" data-i18n="搪瓷">搪瓷</option>
+                <option value="D" data-i18n="渗氮钢">渗氮钢</option>
+                <option value="F" data-i18n="氟塑料">氟塑料</option>
+                <option value="G" data-i18n="陶瓷">陶瓷</option>
+                <option value="H" data-i18n="铁剂不锈钢">铁剂不锈钢</option>
+                <option value="J" data-i18n="衬胶">衬胶</option>
+                <option value="M" data-i18n="蒙乃尔合金">蒙乃尔合金</option>
+                <option value="N" data-i18n="尼龙塑料">尼龙塑料</option>
+                <option value="P" data-i18n="渗硼钢">渗硼钢</option>
+                <option value="Q" data-i18n="衬铅">衬铅</option>
+                <option value="S" data-i18n="塑料">塑料</option>
+                <option value="T" data-i18n="铜合金">铜合金</option>
+                <option value="X" data-i18n="橡胶">橡胶</option>
+                <option value="Y" data-i18n="硬质合金">硬质合金</option>
+                <option value="X/H" data-i18n="铁基合金密封面中镶嵌橡胶材料">铁基合金密封面中镶嵌橡胶材料</option>
+                <option value="W" data-i18n="与阀体材料相同">与阀体材料相同</option>
+            </select>
+        </div>
+
+        <div class="form-group">
+            <label for="pressureRating" data-i18n="pressureRating">压力代号或压力等级:</label>
+            <input type="text" id="pressureRating" placeholder="例如：(PN)10, Class150" data-i18n="e.g., (PN)10, Class150">
+        </div>
+
+        <div class="form-group">
+            <label for="bodyMaterial" data-i18n="bodyMaterial">阀体材料:</label>
+            <select id="bodyMaterial">
+                <option value="" data-i18n="-- 选择阀体材料 --">-- 选择阀体材料 --</option>
+                <option value="C" data-i18n="碳钢">碳钢</option>
+                <option value="" data-i18n="PN25碳钢">PN≥2.5MPa的碳素钢可省略</option>
+                <option value="H" data-i18n="Cr13系不锈钢">Cr13系不锈钢</option>
+                <option value="I" data-i18n="铬钼系钢 (高温钢)">铬钼系钢 (高温钢)</option>
+                <option value="K" data-i18n="可锻铸铁">可锻铸铁</option>
+                <option value="L" data-i18n="铝合金">铝合金</option>
+                <option value="P" data-i18n="铬镍系不锈钢">铬镍系不锈钢</option>
+                <option value="Q" data-i18n="球墨铸铁">球墨铸铁</option>
+                <option value="R" data-i18n="铬镍钼系不锈钢">铬镍钼系不锈钢</option>
+                <option value="S" data-i18n="塑料">塑料</option>
+                <option value="T" data-i18n="铜及铜合金">铜及铜合金</option>
+                <option value="Ti" data-i18n="钛及钛合金">钛及钛合金</option>
+                <option value="V" data-i18n="铬钼钒钢 (高温钢)">铬钼钒钢 (高温钢)</option>
+                <option value="Z" data-i18n="灰铸铁">灰铸铁</option>
+                <option value="" data-i18n="PN16灰铸铁">PN≤1.6MPa的灰铸铁可省略</option>
+                <option value="N" data-i18n="镍基合金">镍基合金</option>
+            </select>
+        </div>
+
+        <button onclick="generateModel()" data-i18n="generateModel">生成型号</button>
+
+        <div id="result" data-i18n="generatedModel"></div>
+    </div>
+    
+    <!--阀门型号解析模块-->
+    <div class="panel">
+        <h2 data-i18n="parsePanelTitle">解析阀门型号</h2>
+        <div class="form-group">
+            <label for="inputModel" data-i18n="inputModel">输入阀门型号:</label>
+            <input type="text" id="inputModel" placeholder="例如: Z942W-10" data-i18n="e.g., Z942W-10">
+        </div>
+        <button onclick="parseModel()" data-i18n="parseModel">解析型号</button>
+
+        <div id="parse-result"></div>
+    </div>
+</div>
+
+<script>
+    // 中英文对照 Translation data
+    const translations = {
+        zh: {
+            "title": "GB/T 32808-2016 阀门 型号编制方法",
+            "h1": "GB/T 32808-2016 阀门 型号编制方法",
+            "language-label": "选择语言",
+            "valveType": "阀门类型",
+            "-- 选择阀门类型 --": "-- 选择阀门类型 --",
+            "安全阀（弹簧载荷式、先导式）": "安全阀（弹簧载荷式、先导式）",
+            "安全阀（重锤杠杆式）": "安全阀（重锤杠杆式）",
+            "蝶阀": "蝶阀",
+            "隔膜阀": "隔膜阀",
+            "止回阀、底阀": "止回阀、底阀",
+            "截止阀": "截止阀",
+            "节流阀": "节流阀",
+            "排污阀": "排污阀",
+            "球阀（整体球）": "球阀（整体球）",
+            "球阀（半球）": "球阀（半球）",
+            "蒸汽疏水阀": "蒸汽疏水阀",
+            "堵阀（电站用）": "堵阀（电站用）",
+            "控制阀（调节阀）": "控制阀（调节阀）",
+            "柱塞阀": "柱塞阀",
+            "旋塞阀": "旋塞阀",
+            "减压阀（自力式）": "减压阀（自力式）",
+            "减温减压阀（非自力式）": "减温减压阀（非自力式）",
+            "闸阀": "闸阀",
+            "driveType": "驱动方式",
+            "-- 选择驱动方式 --": "-- 选择驱动方式 --",
+            "电磁动": "电磁动",
+            "电磁-液动": "电磁-液动",
+            "电-液联动": "电-液联动",
+            "蜗轮": "蜗轮",
+            "正齿轮": "正齿轮",
+            "伞齿轮": "伞齿轮",
+            "气动": "气动",
+            "液动": "液动",
+            "气-液动": "气-液动",
+            "电动": "电动",
+            "缺省情况（手轮、手柄、扳手传动，安全阀、减压阀、疏水阀无驱动）": "缺省情况（手轮、手柄、扳手传动，安全阀、减压阀、疏水阀无驱动）",
+            "缺省情况（无驱动）": "自动启动（省略）",
+            "缺省情况（手轮、手柄、扳手驱动）": "手轮、手柄、扳手驱动（省略）",
+            "connectionType": "连接形式",
+            "-- 选择连接形式 --": "-- 选择连接形式 --",
+            "内螺纹": "内螺纹",
+            "外螺纹": "外螺纹",
+            "法兰": "法兰",
+            "焊接": "焊接",
+            "对夹": "对夹",
+            "卡箍": "卡箍",
+            "卡套": "卡套",
+            "structureType": "结构形式",
+            "-- 选择结构形式 --": "-- 选择结构形式 --",
+            "sealMaterial": "密封面材料",
+            "-- 选择密封面材料 --": "-- 选择密封面材料 --",
+            "锡基合金 (巴氏合金)": "锡基合金 (巴氏合金)",
+            "搪瓷": "搪瓷",
+            "渗氮钢": "渗氮钢",
+            "氟塑料": "氟塑料",
+            "陶瓷": "陶瓷",
+            "铁剂不锈钢": "铁剂不锈钢",
+            "衬胶": "衬胶",
+            "蒙乃尔合金": "蒙乃尔合金",
+            "尼龙塑料": "尼龙塑料",
+            "渗硼钢": "渗硼钢",
+            "衬铅": "衬铅",
+            "塑料": "塑料",
+            "铜合金": "铜合金",
+            "橡胶": "橡胶",
+            "硬质合金": "硬质合金",
+            "铁基合金密封面中镶嵌橡胶材料": "铁基合金密封面中镶嵌橡胶材料",
+            "与阀体材料相同": "与阀体材料相同",
+            "pressureRating": "公称压力代号",
+            "e.g., PN10, Class150": "例如：PN10, Class150",
+            "e.g., Z942W-10": "例如: Z942W-10",
+            "bodyMaterial": "阀体材料",
+            "-- 选择阀体材料 --": "-- 选择阀体材料 --",
+            "碳钢": "碳钢",
+            "PN25碳钢": "PN≥2.5MPa的碳素钢可省略",
+            "Cr13系不锈钢": "Cr13系不锈钢",
+            "铬钼系钢 (高温钢)": "铬钼系钢 (高温钢)",
+            "可锻铸铁": "可锻铸铁",
+            "铝合金": "铝合金",
+            "铬镍系不锈钢": "铬镍系不锈钢",
+            "球墨铸铁": "球墨铸铁",
+            "铬镍钼系不锈钢": "铬镍钼系不锈钢",
+            "塑料": "塑料",
+            "铜及铜合金": "铜及铜合金",
+            "钛及钛合金": "钛及钛合金",
+            "铬钼钒钢 (高温钢)": "铬钼钒钢 (高温钢)",
+            "灰铸铁": "灰铸铁",
+            "PN16灰铸铁": "PN≤1.6MPa的灰铸铁可省略",
+            "镍基合金": "镍基合金",
+            "generateModel": "生成型号",
+            "generatedModel": "生成的型号: ",
+            "inputModel": "输入阀门型号:",
+            "parseModel": "解析型号",
+            "generatePanelTitle": "生成阀门型号",
+            "parsePanelTitle": "解析阀门型号",
+            // Structure Type Options
+            "明杆升降移动，楔式密封面，单闸板，有弹性槽": "明杆升降移动，楔式密封面，单闸板，有弹性槽",
+            "明杆升降移动，楔式密封面，单闸板，无弹性槽": "明杆升降移动，楔式密封面，单闸板，无弹性槽",
+            "明杆升降移动，楔式密封面，双闸板": "明杆升降移动，楔式密封面，双闸板",
+            "明杆升降移动，平行式密封面，单闸板": "明杆升降移动，平行式密封面，单闸板",
+            "明杆升降移动，平行式密封面，双闸板": "明杆升降移动，平行式密封面，双闸板",
+            "暗杆升降移动，楔式密封面，单闸板": "暗杆升降移动，楔式密封面，单闸板",
+            "暗杆升降移动，楔式密封面，双闸板": "暗杆升降移动，楔式密封面，双闸板",
+            "暗杆升降移动，平行式密封面，单闸板": "暗杆升降移动，平行式密封面，单闸板",
+            "暗杆升降移动，平行式密封面，双闸板": "暗杆升降移动，平行式密封面，双闸板",
+            "直通流道": "直通流道",
+            "Z型流道": "Z型流道",
+            "三通流道": "三通流道",
+            "角式流道": "角式流道",
+            "Y形流道": "Y形流道",
+            "直通流道，单阀瓣": "直通流道，单阀瓣",
+            "Z型流道，单阀瓣": "Z型流道，单阀瓣",
+            "三通流道，单阀瓣": "三通流道，单阀瓣",
+            "角式流道，单阀瓣": "角式流道，单阀瓣",
+            "Y形流道，单阀瓣": "Y形流道，单阀瓣",
+            "直通流道，平衡式阀瓣": "直通流道，平衡式阀瓣",
+            "角式流道，平衡式阀瓣": "角式流道，平衡式阀瓣",
+            "弹簧荷载，弹簧封闭结构，带散热片全启式": "弹簧荷载，弹簧封闭结构，带散热片全启式",
+            "弹簧荷载，弹簧封闭结构，微启式": "弹簧荷载，弹簧封闭结构，微启式",
+            "弹簧荷载，弹簧封闭结构，全启式": "弹簧荷载，弹簧封闭结构，全启式",
+            "弹簧荷载，弹簧封闭结构，带扳手全启式": "弹簧荷载，弹簧封闭结构，带扳手全启式",
+            "杠杆式，单杠杆": "杠杆式，单杠杆",
+            "杠杆式，双杠杆": "杠杆式，双杠杆",
+            "弹簧荷载，弹簧不封闭，且带扳手结构，微启式、双联阀": "弹簧荷载，弹簧不封闭，且带扳手结构，微启式、双联阀",
+            "弹簧荷载，弹簧不封闭，且带扳手结构，微启式": "弹簧荷载，弹簧不封闭，且带扳手结构，微启式",
+            "弹簧荷载，弹簧不封闭，且带扳手结构，全启式": "弹簧荷载，弹簧不封闭，且带扳手结构，全启式",
+            "带控制机构全启式（先导式）": "带控制机构全启式（先导式）",
+            "脉冲式（全冲量）": "脉冲式（全冲量）",
+            "浮动球，直通式流道": "浮动球，直通式流道",
+            "浮动球，Y型三通式流道": "浮动球，Y型三通式流道",
+            "浮动球，L型三通式流道": "浮动球，L型三通式流道",
+            "浮动球，T型三通式流道": "浮动球，T型三通式流道",
+            "固定球，四通式流道": "固定球，四通式流道",
+            "固定球，直通式流道": "固定球，直通式流道",
+            "固定球，L型三通式流道": "固定球，L型三通式流道",
+            "固定球，T型三通式流道": "固定球，T型三通式流道",
+            "固定球，半球直通": "固定球，半球直通",
+            "升降式阀瓣，直通流道": "升降式阀瓣，直通流道",
+            "升降式阀瓣，立式结构": "升降式阀瓣，立式结构",
+            "升降式阀瓣，Z型流道": "升降式阀瓣，Z型流道",
+            "升降式阀瓣，Y型流道": "升降式阀瓣，Y型流道",
+            "旋启式阀瓣，单瓣结构": "旋启式阀瓣，单瓣结构",
+            "旋启式阀瓣，多瓣结构": "旋启式阀瓣，多瓣结构",
+            "旋启式阀瓣，双瓣结构": "旋启式阀瓣，双瓣结构",
+            "蝶形（双瓣）结构": "蝶形（双瓣）结构",
+        },
+        en: {
+            "title": "GB/T 32808-2016 Valves——Model designation method",
+            "h1": "GB/T 32808-2016 Valves——Model designation method",
+            "language-label": "Select Language",
+            "valveType": "Valve Type",
+            "-- 选择阀门类型 --": "-- Select Valve Type --",
+            "安全阀（弹簧载荷式、先导式）": "Safety valve (spring loaded, pilot operated)",
+            "安全阀（重锤杠杆式）": "Safety valve (weight lever type)",
+            "蝶阀": "Butterfly valve",
+            "隔膜阀": "Diaphragm valve",
+            "止回阀、底阀": "Check valve, bottom valve",
+            "截止阀": "Globe valve",
+            "节流阀": "Throttle valve",
+            "排污阀": "Blowdown valve",
+            "球阀（整体球）": "Ball valve (full ball)",
+            "球阀（半球）": "Ball valve (semi-ball)",
+            "蒸汽疏水阀": "Steam trap",
+            "堵阀（电站用）": "Block valve (for power plant)",
+            "控制阀（调节阀）": "Control valve (regulating valve)",
+            "柱塞阀": "Plunger valve",
+            "旋塞阀": "Plug valve",
+            "减压阀（自力式）": "Pressure reducing valve (self-operated)",
+            "减温减压阀（非自力式）": "Temperature and pressure reducing valve (non-self-operated)",
+            "闸阀": "Gate valve",
+            "driveType": "Drive Type",
+            "-- 选择驱动方式 --": "-- Select Drive Type --",
+            "电磁动": "Electromagnetic",
+            "电磁-液动": "Electromagnetic-hydraulic",
+            "电-液联动": "Electro-hydraulic",
+            "蜗轮": "Worm gear",
+            "正齿轮": "Spur gear",
+            "伞齿轮": "Bevel gear",
+            "气动": "Pneumatic",
+            "液动": "Hydraulic",
+            "气-液动": "Pneumatic-hydraulic",
+            "电动": "Electric",
+            "缺省情况（手轮、手柄、扳手传动，安全阀、减压阀、疏水阀无驱动）": "Default (handwheel, handle, wrench operation, no drive for safety, pressure reducing, steam trap valves)",
+            "缺省情况（无驱动）":  "Automatic operation (omitted)",
+            "缺省情况（手轮、手柄、扳手驱动）":  "Handwheel, handle, or wrench drive (omitted)",
+            "connectionType": "Connection Type",
+            "-- 选择连接形式 --": "-- Select Connection Type --",
+            "内螺纹": "Internal thread",
+            "外螺纹": "External thread",
+            "法兰": "Flange",
+            "焊接": "Welding",
+            "对夹": "Clip",
+            "卡箍": "Clamp",
+            "卡套": "Ferrule",
+            "structureType": "Structure Type",
+            "-- 选择结构形式 --": "-- Select Structure Type --",
+            "sealMaterial": "Seal Material",
+            "-- 选择密封面材料 --": "-- Select Seal Material --",
+            "锡基合金 (巴氏合金)": "Tin-based alloy (Babbitt alloy)",
+            "搪瓷": "Enamel",
+            "渗氮钢": "Nitrided steel",
+            "氟塑料": "Fluoroplastic",
+            "陶瓷": "Ceramic",
+            "铁剂不锈钢": "Ferritic stainless steel",
+            "衬胶": "Rubber lined",
+            "蒙乃尔合金": "Monel alloy",
+            "尼龙塑料": "Nylon plastic",
+            "渗硼钢": "Borided steel",
+            "衬铅": "Lead lined",
+            "塑料": "Plastic",
+            "铜合金": "Copper alloy",
+            "橡胶": "Rubber",
+            "硬质合金": "Hard alloy",
+            "铁基合金密封面中镶嵌橡胶材料": "Iron-based alloy seal face with rubber material",
+            "与阀体材料相同": "Same as valve body material",
+            "pressureRating": "Pressure Rating",
+            "e.g., PN10, Class150": "e.g., PN10, Class150",
+            "e.g., Z942W-10": "e.g., Z942W-10",
+            "bodyMaterial": "Body Material",
+            "-- 选择阀体材料 --": "-- Select Body Material --",
+            "碳钢": "Carbon steel",
+            "PN25碳钢": "Carbon steel can be omitted for PN ≥ 2.5MPa",
+            "Cr13系不锈钢": "Cr13 stainless steel",
+            "铬钼系钢 (高温钢)": "Chromium-molybdenum steel (high-temperature steel)",
+            "可锻铸铁": "Malleable cast iron",
+            "铝合金": "Aluminum alloy",
+            "铬镍系不锈钢": "Chromium-nickel stainless steel",
+            "球墨铸铁": "Ductile cast iron",
+            "铬镍钼系不锈钢": "Chromium-nickel-molybdenum stainless steel",
+            "塑料": "Plastic",
+            "铜及铜合金": "Copper and copper alloys",
+            "钛及钛合金": "Titanium and titanium alloys",
+            "铬钼钒钢 (高温钢)": "Chromium-molybdenum-vanadium steel (high-temperature steel)",
+            "灰铸铁": "Grey cast iron",
+            "PN16灰铸铁": "Grey cast iron can be omitted for PN ≤ 1.6MPa",
+            "镍基合金": "Nickel-based alloy",
+            "generateModel": "Generate Model",
+            "generatedModel": "Generated Model: ",
+            "inputModel": "Input Valve Model:",
+            "parseModel": "Parse Model",
+            "generatePanelTitle": "Generate Valve Model",
+            "parsePanelTitle": "Parse Valve Model",
+            // Structure Type Options (English Translations - Adjust as needed)
+            "明杆升降移动，楔式密封面，单闸板，有弹性槽": "Rising stem gate valve, wedge disc with flexible slot",
+            "明杆升降移动，楔式密封面，单闸板，无弹性槽": "Rising stem gate valve, wedge disc without flexible slot",
+            "明杆升降移动，楔式密封面，双闸板": "Rising stem gate valve, double wedge disc",
+            "明杆升降移动，平行式密封面，单闸板": "Rising stem gate valve, parallel disc without flexible slot",
+            "明杆升降移动，平行式密封面，双闸板": "Rising stem gate valve, parallel double disc",
+            "暗杆升降移动，楔式密封面，单闸板": "Non-rising stem gate valve, wedge disc",
+            "暗杆升降移动，楔式密封面，双闸板": "Non-rising stem gate valve, parallel double disc",
+            "暗杆升降移动，平行式密封面，单闸板": "Gate valve without diversion hole (indicated by 'w')",
+            "直通流道": "Straight through",
+            "Z型流道": "Z type",
+            "三通流道": "Three-way",
+            "角式流道": "Angle type",
+            "Y形流道": "Y type",
+            "直通流道，单阀瓣": "Straight through, single disc",
+            "Z型流道，单阀瓣": "Z type, single disc",
+            "三通流道，单阀瓣": "Three-way, single disc",
+            "角式流道，单阀瓣": "Angle type, single disc",
+            "Y形流道，单阀瓣": "Y type, single disc",
+            "直通流道，平衡式阀瓣": "Straight through, balanced disc",
+            "角式流道，平衡式阀瓣": "Angle type, balanced disc",
+            "弹簧荷载，弹簧封闭结构，带散热片全启式": "Spring loaded, enclosed spring structure, full lift with散热片",
+            "弹簧荷载，弹簧封闭结构，微启式": "Spring loaded, enclosed spring structure, low lift",
+            "弹簧荷载，弹簧封闭结构，全启式": "Spring loaded, enclosed spring structure, full lift",
+            "弹簧荷载，弹簧封闭结构，带扳手全启式": "Spring loaded, enclosed spring structure, full lift with wrench",
+            "杠杆式，单杠杆": "Lever operated, single lever",
+            "杠杆式，双杠杆": "Lever operated, double lever",
+            "弹簧荷载，弹簧不封闭，且带扳手结构，微启式、双联阀": "Spring loaded, open spring structure, low lift with wrench, double valve",
+            "弹簧荷载，弹簧不封闭，且带扳手结构，微启式": "Spring loaded, open spring structure, low lift with wrench",
+            "弹簧荷载，弹簧不封闭，且带扳手结构，全启式": "Spring loaded, open spring structure, full lift with wrench",
+            "带控制机构全启式（先导式）": "Full lift with control mechanism (pilot operated)",
+            "脉冲式（全冲量）": "Impulse type (full impulse)",
+            "浮动球，直通式流道": "Floating ball, straight through",
+            "浮动球，Y型三通式流道": "Floating ball, Y-type three-way",
+            "浮动球，L型三通式流道": "Floating ball, L-type three-way",
+            "浮动球，T型三通式流道": "Floating ball, T-type three-way",
+            "固定球，四通式流道": "Fixed ball, four-way",
+            "固定球，直通式流道": "Fixed ball, straight through",
+            "固定球，L型三通式流道": "Fixed ball, L-type three-way",
+            "固定球，T型三通式流道": "Fixed ball, T-type three-way",
+            "固定球，半球直通": "Fixed ball, half-ball straight through",
+            "升降式阀瓣，直通流道": "Lift check valve, straight through",
+            "升降式阀瓣，立式结构": "Lift check valve, vertical type",
+            "升降式阀瓣，Z型流道": "Lift check valve, Z type",
+            "升降式阀瓣，Y型流道": "Lift check valve, Y type",
+            "旋启式阀瓣，单瓣结构": "Swing check valve, single disc",
+            "旋启式阀瓣，多瓣结构": "Swing check valve, multi-disc",
+            "旋启式阀瓣，双瓣结构": "Swing check valve, double disc",
+            "蝶形（双瓣）结构": "Butterfly type (double disc) structure"
+        }
+    };
+    
+    // 对应多种阀门类型的结构形式
+    const commonStructionOptions1 = [  // 截止阀Globe Valve, 节流阀 Throttle valve Table 6
+            { "value": "1", "text": "直通流道，单阀瓣" },
+            { "value": "2", "text": "Z型流道，单阀瓣" },
+            { "value": "3", "text": "三通流道，单阀瓣" },
+            { "value": "4", "text": "角式流道，单阀瓣" },
+            { "value": "5", "text": "Y形流道，单阀瓣" },
+            { "value": "6", "text": "直通流道，平衡式阀瓣" },
+            { "value": "7", "text": "角式流道，平衡式阀瓣" }
+        ];
+    const commonStructionOptions2 = [  // 安全阀 Table 19
+            { "value": "0", "text": "弹簧荷载，弹簧封闭结构，带散热片全启式" },
+            { "value": "1", "text": "弹簧荷载，弹簧封闭结构，微启式" },
+            { "value": "2", "text": "弹簧荷载，弹簧封闭结构，全启式" },
+            { "value": "4", "text": "弹簧荷载，弹簧封闭结构，带扳手全启式" },
+            { "value": "2", "text": "杠杆式，单杠杆" },
+            { "value": "4", "text": "杠杆式，双杠杆" },
+            { "value": "3", "text": "弹簧荷载，弹簧不封闭，且带扳手结构，微启式、双联阀" },
+            { "value": "7", "text": "弹簧荷载，弹簧不封闭，且带扳手结构，微启式" },
+            { "value": "8", "text": "弹簧荷载，弹簧不封闭，且带扳手结构，全启式" },
+            { "value": "6", "text": "带控制机构全启式（先导式）" },
+            { "value": "9", "text": "脉冲式（全冲量）" }
+        ];
+    const commonStructionOptions3 = [  // 球阀 Table 8
+            { "value": "1", "text": "浮动球，直通式流道" },
+            { "value": "2", "text": "浮动球，Y型三通式流道" },
+            { "value": "4", "text": "浮动球，L型三通式流道" },
+            { "value": "5", "text": "浮动球，T型三通式流道" },
+            { "value": "6", "text": "固定球，四通式流道" },
+            { "value": "7", "text": "固定球，直通式流道" },
+            { "value": "8", "text": "固定球，L型三通式流道" },
+            { "value": "9", "text": "固定球，T型三通式流道" },
+            { "value": "0", "text": "固定球，半球直通" }
+        ];
+        
+    // 阀门结构选项
+    const structure_options = {
+        "Z": [  // 闸阀/Gate Valve Table 5
+            { "value": "0", "text": "明杆升降移动，楔式密封面，单闸板，有弹性槽" },
+            { "value": "1", "text": "明杆升降移动，楔式密封面，单闸板，无弹性槽" },
+            { "value": "2", "text": "明杆升降移动，楔式密封面，双闸板" },
+            { "value": "3", "text": "明杆升降移动，平行式密封面，单闸板" },
+            { "value": "4", "text": "明杆升降移动，平行式密封面，双闸板" },
+            { "value": "5", "text": "暗杆升降移动，楔式密封面，单闸板" },
+            { "value": "6", "text": "暗杆升降移动，楔式密封面，双闸板" },
+            { "value": "7", "text": "暗杆升降移动，平行式密封面，单闸板" },
+            { "value": "8", "text": "暗杆升降移动，平行式密封面，双闸板" }
+        ],                           
+        "J": commonStructionOptions1,
+        "L": commonStructionOptions1,
+        "H": [  // 止回阀 Check Valve Table 7
+            { "value": "1", "text": "升降式阀瓣，直通流道" },
+            { "value": "2", "text": "升降式阀瓣，立式结构" },
+            { "value": "3", "text": "升降式阀瓣，Z型流道" },
+            { "value": "5", "text": "升降式阀瓣，Y型流道" },
+            { "value": "4", "text": "旋启式阀瓣，单瓣结构" },
+            { "value": "5", "text": "旋启式阀瓣，多瓣结构" },
+            { "value": "6", "text": "旋启式阀瓣，双瓣结构" },
+            { "value": "7", "text": "蝶形（双瓣）结构" }
+        ],
+        "Q": commonStructionOptions3,
+        "PQ": commonStructionOptions3,
+        "D": [  // 蝶阀 Butterfly Valve Table 9
+            { "value": "0", "text": "密封副有密封性要求的，单偏心" },
+            { "value": "1", "text": "密封副有密封性要求的，中心对称垂直板" },
+            { "value": "2", "text": "密封副有密封性要求的，双偏心" },
+            { "value": "3", "text": "密封副有密封性要求的，三偏心" },
+            { "value": "4", "text": "密封副有密封性要求的，连杆机构" },
+            { "value": "5", "text": "密封副无密封要求的，单偏心" },
+            { "value": "6", "text": "密封副无密封要求的，中心垂直板" },
+            { "value": "7", "text": "密封副无密封要求的，双偏心" },
+            { "value": "8", "text": "密封副无密封要求的，三偏心" },
+            { "value": "9", "text": "密封副无密封要求的，连杆机构" }
+        ],
+        "X": [  // 旋塞阀 Plug Valve Table 10
+            { "value": "3", "text": "填料密封型，直通式流道" },
+            { "value": "4", "text": "填料密封型，三通T型流道" },
+            { "value": "5", "text": "填料密封型，四通流道" },
+            { "value": "7", "text": "油封型，直通式流道" },
+            { "value": "8", "text": "油封型，三通T型流道" }
+        ],
+        "G": [  // 隔膜阀 Diaphragm Valve Table 11
+            { "value": "1", "text": "屋脊式流道" },
+            { "value": "5", "text": "直流式流道" },
+            { "value": "6", "text": "直通式流道" },
+            { "value": "8", "text": "Y型角式流道" }
+        ],
+        "U": [  // 柱塞阀 Plunger Valve Table 12
+            { "value": "1", "text": "直通式流道" },
+            { "value": "4", "text": "角式流道" }
+        ],
+        "Y": [  // 减压阀（自力式） Pressure-reducing valve Table 13
+            { "value": "1", "text": "薄膜式" },
+            { "value": "2", "text": "弹簧薄膜式" },
+            { "value": "3", "text": "活塞式" },
+            { "value": "4", "text": "波纹管式" },
+            { "value": "5", "text": "杠杆式" }
+        ],
+        "T": [  // 控制阀（调节阀） Control valve (Regulating valve) Table 14
+            { "value": "7", "text": "直行程，单级，套筒式" },
+            { "value": "5", "text": "直行程，单级，套筒柱塞式" },
+            { "value": "2", "text": "直行程，单级，针形式" },
+            { "value": "4", "text": "直行程，单级，柱塞式" },
+            { "value": "6", "text": "直行程，单级，滑板式" },
+            { "value": "8", "text": "直行程，两级或多级，套筒式" },
+            { "value": "1", "text": "直行程，两级或多级，柱塞式" },
+            { "value": "9", "text": "直行程，两级或多级，套筒柱塞式" },
+            { "value": "0", "text": "角行程，套筒式" }
+        ],
+        "WY": [  // 减温减压阀（非自力式） Table 15
+            { "value": "1", "text": "单座，柱塞式" },
+            { "value": "2", "text": "单座，套筒柱塞式" },
+            { "value": "3", "text": "单座，套筒式" },
+            { "value": "4", "text": "双座或多级，套筒式" },
+            { "value": "5", "text": "双座或多级，柱塞式" },
+            { "value": "6", "text": "双座或多级，套筒柱塞式" }
+        ],
+        "SD": [  // 堵阀 Block valve Table 16
+            { "value": "1", "text": "闸板式" },
+            { "value": "2", "text": "止回式" }
+        ],
+        "S": [  // 蒸汽疏水阀 Steam trap Table 17
+            { "value": "1", "text": "自由浮球式" },
+            { "value": "2", "text": "杠杆浮球式" },
+            { "value": "3", "text": "倒置桶式" },
+            { "value": "4", "text": "液体或固体膨胀式" },
+            { "value": "5", "text": "钟形浮子式" },
+            { "value": "6", "text": "蒸汽压力式或膜盒式" },
+            { "value": "7", "text": "双金属片式" },
+            { "value": "8", "text": "脉冲式" },
+            { "value": "9", "text": "圆盘热动力式" }
+        ],
+        "PW": [  // 排污阀 Blowdown valve Table 18
+            { "value": "1", "text": "液面连接排放，截止型直通式" },
+            { "value": "2", "text": "液面连接排放，截止型角式" },
+            { "value": "5", "text": "液底间断排放，截止型直流式" },
+            { "value": "6", "text": "液底间断排放，截止型直通式" },
+            { "value": "7", "text": "液底间断排放，截止型角式" },
+            { "value": "8", "text": "液底间断排放，浮动闸板直通式" }
+        ],
+        "A": commonStructionOptions2,
+        "GA": commonStructionOptions2,
+        
+    };
+    
+    // 中英文语言切换
+    function toggleLanguage() {
+        const languageToggle = document.getElementById("languageToggle");
+        const currentClass = languageToggle.className;
+        if (currentClass === "zh-active") {
+            languageToggle.className = "en-active";
+            changeLanguageTo("en");
+        } else {
+            languageToggle.className = "zh-active";
+            changeLanguageTo("zh");
+        }
+    }
+
+    // 更改文本语言
+    function changeLanguageTo(language) {
+        // 更新文本内容
+        const elements = document.querySelectorAll("[data-i18n]");
+        elements.forEach(element => {
+            const translationKey = element.getAttribute("data-i18n");
+            if (translations[language][translationKey]) {
+                element.textContent = translations[language][translationKey];
+            }
+        });
+
+        // 更新下拉选项
+        updateSelectOptions(language);
+    }
+
+    // 初始化语言选择器
+    document.addEventListener("DOMContentLoaded", function() {
+        const languageToggle = document.getElementById("languageToggle");
+        languageToggle.className = "zh-active"; // 默认为中文
+    });
+    
+    // 更新下拉选项
+    function updateSelectOptions(language) {
+        const selectElements = document.querySelectorAll("select");
+        selectElements.forEach(selectElement => {
+            const options = selectElement.options;
+            for (let i = 0; i < options.length; i++) {
+                const originalChinese = options[i].getAttribute("data-i18n");
+                if (originalChinese && translations[language][originalChinese]) {
+                    options[i].textContent = translations[language][originalChinese];
+                }
+            }
+        });
+    }
+
+    // 生成闸门型号
+    function generateModel() {
+        const valveType = document.getElementById("valveType").value;
+        const driveType = document.getElementById("driveType").value;
+        const connectionType = document.getElementById("connectionType").value;
+        const structureType = document.getElementById("structureType").value;
+        const sealMaterial = document.getElementById("sealMaterial").value;
+        const pressureRating = document.getElementById("pressureRating").value;
+        const bodyMaterial = document.getElementById("bodyMaterial").value;
+        const languageToggle = document.getElementById("languageToggle");
+        let language = "zh"; // 默认语言为中文
+
+        // 根据语言切换按钮的类名确定当前语言
+        if (languageToggle.className === "en-active") {
+            language = "en";
+        }
+
+        let model = valveType + driveType + connectionType + structureType + sealMaterial + "-" + pressureRating + bodyMaterial;
+
+        document.getElementById("result").textContent = translations[language]["generatedModel"] + model;
+    }
+
+    // 闸门型号解析-总
+    function parseModel() {
+        const model = document.getElementById("inputModel").value.trim();
+        if (!model) {
+            alert("Please enter a valve model.");
+            return;
+        }
+
+        const parseResult = parseValveModel(model);
+        displayParseResult(parseResult);
+    }
+    
+    // 闸门型号逐项解析
+    function parseValveModel(model) {
+        const result = {};
+        const languageToggle = document.getElementById("languageToggle");
+        let language = "zh"; // 默认语言为中文
+
+        // 根据语言切换按钮的类名确定当前语言
+        if (languageToggle.className === "en-active") {
+            language = "en";
+        }
+
+        // Split the model into parts
+        const parts = model.split("-");
+        if (parts.length < 1) {
+            result.error = "Invalid model format.";
+            return result;
+        }
+
+        const typePart = parts[0];
+        const pressurePart = parts.length > 1 ? parts[1] : "";
+
+        // 闸门类型 Parse Valve Type
+        if (typePart.length > 0) {
+            const valveTypeCode = typePart.charAt(0).toUpperCase();
+            const valveTypeOption = document.querySelector(`#valveType option[value="${valveTypeCode}"]`);
+            if (valveTypeOption) {
+                result.valveType = translations[language]["valveType"] + ": " + valveTypeOption.textContent;
+            } else {
+                result.valveType = translations[language]["valveType"] + ": " + valveTypeCode;
+            }
+        }
+
+        // 根据字符串长度，判断驱动方式是否缺省（仍需改进）
+        let driveTypeIndex = 1;
+        let connectionTypeIndex = 2;
+        let structureTypeIndex = 3;
+        let sealMaterialIndex = 4;
+
+        if (typePart.length === 4) {
+            // Drive type is omitted
+            driveTypeIndex = 0;
+            connectionTypeIndex = 1;
+            structureTypeIndex = 2;
+            sealMaterialIndex = 3;
+        }
+
+        // 驱动方式解析 Parse Drive Type
+        if (typePart.length > 4) {
+            const driveTypeCode = typePart.charAt(driveTypeIndex);
+            const driveTypeOption = document.querySelector(`#driveType option[value="${driveTypeCode}"]`);
+            if (driveTypeOption) {
+                result.driveType = translations[language]["driveType"] + ": " + driveTypeOption.textContent;
+            } else {
+                result.driveType = translations[language]["driveType"] + ": " + driveTypeCode;
+            }
+        } else {
+            // Handle default drive type based on valve type
+            const valveTypeCode = typePart.charAt(0).toUpperCase();
+            if (valveTypeCode === "A" || valveTypeCode === "GA" || valveTypeCode === "H" || valveTypeCode === "Y" || valveTypeCode === "S") {
+                // Safety valve, Pressure reducing valve, Check valve, Pressure reducing valve (self-operated), Steam trap
+                result.driveType = translations[language]["driveType"] + ": " + translations[language]["缺省情况（无驱动）"];
+            } else {
+                result.driveType = translations[language]["driveType"] + ": " + translations[language]["缺省情况（手轮、手柄、扳手驱动）"];
+            }
+        }
+
+        // 连接方式 Parse Connection Type
+        if (typePart.length > connectionTypeIndex) {
+            const connectionTypeCode = typePart.charAt(connectionTypeIndex);
+            const connectionTypeOption = document.querySelector(`#connectionType option[value="${connectionTypeCode}"]`);
+            if (connectionTypeOption) {
+                result.connectionType = translations[language]["connectionType"] + ": " + connectionTypeOption.textContent;
+            } else {
+                result.connectionType = translations[language]["connectionType"] + ": " + connectionTypeCode;
+            }
+        }
+
+        // 结构形式 Parse Structure Type
+        if (typePart.length > structureTypeIndex) {
+            const structureTypeCode = typePart.charAt(structureTypeIndex);
+            const valveTypeCode = typePart.charAt(0).toUpperCase();
+            let structureOptions = [];
+            if (valveTypeCode in structure_options) {
+                structureOptions = structure_options[valveTypeCode];
+            }
+            const structureOption = structureOptions.find(option => option.value === structureTypeCode);
+            if (structureOption) {
+                const structureTextKey = structureOption.text;
+                let structureText = structureTextKey;
+                if (translations[language][structureTextKey]) {
+                    structureText = translations[language][structureTextKey];
+                }
+                result.structureType = translations[language]["structureType"] + ": " + structureText;
+            } else {
+                result.structureType = translations[language]["structureType"] + ": " + structureTypeCode;
+            }
+        }
+
+        // 密封面材料 Parse Seal Material
+        if (typePart.length > sealMaterialIndex) {
+            const sealMaterialCode = typePart.charAt(sealMaterialIndex);
+            const sealMaterialOption = document.querySelector(`#sealMaterial option[value="${sealMaterialCode}"]`);
+            if (sealMaterialOption) {
+                result.sealMaterial = translations[language]["sealMaterial"] + ": " + sealMaterialOption.textContent;
+            } else {
+                result.sealMaterial = translations[language]["sealMaterial"] + ": " + sealMaterialCode;
+            }
+        }
+
+        // 公称压力代号和阀体材料 Parse Pressure Rating and Body Material
+        if (pressurePart) {
+            const lastChar = pressurePart.slice(-1);
+            const isLetter = /^[A-Za-z]$/.test(lastChar);
+            
+            let pressureRatingPart = pressurePart;
+            
+            // 阀体材料是否缺省
+            if (isLetter) {
+                // 未缺省时，压力代号前移一位
+                pressureRatingPart = pressurePart.slice(0, -1);
+                const bodyMaterialCode = lastChar.toUpperCase();
+
+                // 阀体材料解析 Parse body material
+                const bodyMaterialOption = document.querySelector(`#bodyMaterial option[value="${bodyMaterialCode}"]`);
+                if (bodyMaterialOption) {
+                    result.bodyMaterial = translations[language]["bodyMaterial"] + ": " + bodyMaterialOption.textContent;
+                } else {
+                    result.bodyMaterial = translations[language]["bodyMaterial"] + ": " + bodyMaterialCode;
+                }
+            } else {
+                // 缺省时，Body material is omitted
+                //const pressureRatingPart = pressurePart;
+                
+                // 根据压力判断阀体材料
+                const pressureNumber = parseInt(pressurePart);
+                if (!isNaN(pressureNumber)) {
+                    if (pressureNumber <= 16) {
+                        result.bodyMaterial = translations[language]["bodyMaterial"] + ": " + translations[language]["灰铸铁"];
+                    } else if (pressureNumber >= 25) {
+                        result.bodyMaterial = translations[language]["bodyMaterial"] + ": " + translations[language]["碳钢"];
+                    } else {
+                        result.bodyMaterial = translations[language]["bodyMaterial"] + ": " + "Omitted (not determinable)";
+                    }
+                } else {
+                    result.bodyMaterial = translations[language]["bodyMaterial"] + ": " + "Omitted (not determinable)";
+                }
+            }
+            
+            // 公称压力代号 Parse pressure rating
+            if (pressureRatingPart.toUpperCase().startsWith("CLASS") || pressureRatingPart.toUpperCase().startsWith("CL")) {
+                result.pressureRating = translations[language]["pressureRating"] + ": " + pressureRatingPart.replace(/CLASS|CL/gi, "压力等级CL");
+            } else if (/^\d+$/.test(pressureRatingPart)) {
+                result.pressureRating = translations[language]["pressureRating"] + ": PN" + pressureRatingPart + " (" + pressureRatingPart/10 + "MPa)";
+            } else {
+                result.pressureRating = translations[language]["pressureRating"] + ": " + pressureRatingPart;
+            }
+        }
+
+        return result;
+    }
+       
+    // 显示解析结果
+    function displayParseResult(result) {
+        let resultDiv = document.getElementById("parse-result");
+        resultDiv.innerHTML = ""; // Clear previous results
+
+        if (result.error) {
+            resultDiv.textContent = result.error;
+            return;
+        }
+
+        let ul = document.createElement("ul");
+
+        if (result.valveType) {
+            let li = document.createElement("li");
+            li.textContent = result.valveType;
+            ul.appendChild(li);
+        }
+
+        if (result.driveType) {
+            let li = document.createElement("li");
+            li.textContent = result.driveType;
+            ul.appendChild(li);
+        }
+
+        if (result.connectionType) {
+            let li = document.createElement("li");
+            li.textContent = result.connectionType;
+            ul.appendChild(li);
+        }
+
+        if (result.structureType) {
+            let li = document.createElement("li");
+            li.textContent = result.structureType;
+            ul.appendChild(li);
+        }
+
+        if (result.sealMaterial) {
+            let li = document.createElement("li");
+            li.textContent = result.sealMaterial;
+            ul.appendChild(li);
+        }
+
+        if (result.pressureRating) {
+            let li = document.createElement("li");
+            li.textContent = result.pressureRating;
+            ul.appendChild(li);
+        }
+
+        if (result.bodyMaterial) {
+            let li = document.createElement("li");
+            li.textContent = result.bodyMaterial;
+            ul.appendChild(li);
+        }
+
+        resultDiv.appendChild(ul);
+    }
+
+    // 阀门类型更改事件监听
+    document.getElementById("valveType").addEventListener("change", updateStructureOptions);
+
+    // 结构形式选项更新
+    function updateStructureOptions() {
+        console.log("updateStructureOptions called");
+        const valveType = document.getElementById("valveType").value;
+        const structureSelect = document.getElementById("structureType");
+        const languageToggle = document.getElementById("languageToggle");
+        let language = "zh"; // 默认语言为中文
+
+        // 根据语言切换按钮的类名确定当前语言
+        if (languageToggle.className === "en-active") {
+            language = "en";
+        }
+
+        console.log("Selected valveType:", valveType);
+
+        // Clear existing options
+        structureSelect.innerHTML = "";
+
+        // Create default option
+        let defaultOption = document.createElement("option");
+        defaultOption.value = "";
+        defaultOption.text = translations[language]["-- 选择结构形式 --"];
+        structureSelect.add(defaultOption);
+
+        if (valveType in structure_options) {
+            console.log(`Adding options for ${valveType}`);
+            for (const option_data of structure_options[valveType]) {
+                addOption(structureSelect, option_data.value, option_data.text, language);
+            }
+        } else {
+            console.log("No specific valve type selected or recognized.");
+        }
+    }
+
+    // 结构形式选项更新辅助函数
+    function addOption(selectElement, value, text, language) {
+        let option = document.createElement("option");
+        option.value = value;
+        option.text = translations[language][text] || text; // Use translation if available
+        selectElement.add(option);
+        console.log("Added option:", value, translations[language][text] || text);
+    }
+</script>
+</body>
+</html>
