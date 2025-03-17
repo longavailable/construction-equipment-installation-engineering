@@ -796,10 +796,19 @@
         const connectionType = document.getElementById("connectionType").value;
         const structureType = document.getElementById("structureType").value;
         const sealMaterial = document.getElementById("sealMaterial").value;
-        const pressureRating = document.getElementById("pressureRating").value;
         const bodyMaterial = document.getElementById("bodyMaterial").value;
         const languageToggle = document.getElementById("languageToggle");
         let language = "zh"; // 默认语言为中文
+        
+        // 检查压力代号是否为空
+        var inputPressure = document.getElementById("pressureRating");
+        var pressureRating = inputPressure.value;
+        if (!pressureRating) {
+            alert("请输入压力代号。/Please enter a valve model.");
+            inputPressure.focus(); // 将光标移动到文本框
+            inputPressure.select(); // 选中文本框中的内容
+            return;
+        }
 
         // 根据语言切换按钮的类名确定当前语言
         if (languageToggle.className === "en-active") {
@@ -813,9 +822,12 @@
 
     // 闸门型号解析-总
     function parseModel() {
-        const model = document.getElementById("inputModel").value.trim();
+        var inputmodel = inputModel = document.getElementById("inputModel");
+        var model = inputmodel.value.trim();
         if (!model) {
-            alert("Please enter a valve model.");
+            alert("请输入阀门型号。/Please enter a valve model.");
+            inputModel.focus(); // 将光标移动到文本框
+            inputModel.select(); // 选中文本框中的内容
             return;
         }
 
